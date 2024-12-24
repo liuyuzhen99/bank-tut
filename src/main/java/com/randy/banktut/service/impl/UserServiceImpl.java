@@ -23,7 +23,7 @@ public class UserServiceImpl implements UserService{
          * Creating an account - saving a new user into the db
          * check if already has an account
          */
-        if (userRepository.existByEmail(userRequest.getEmail())) {
+        if (userRepository.existsByEmail(userRequest.getEmail())) {
             return BankResponse.builder()
                     .responseCode(AccountUtils.ACCOUNT_EXISTS_CODE)
                     .responseMessage(AccountUtils.ACCOUNT_EXISTS_MESSAGE)

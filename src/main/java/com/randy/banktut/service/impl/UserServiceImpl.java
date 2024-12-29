@@ -2,6 +2,7 @@ package com.randy.banktut.service.impl;
 
 import com.randy.banktut.dto.AccountInfo;
 import com.randy.banktut.dto.BankResponse;
+import com.randy.banktut.dto.EmailDetails;
 import com.randy.banktut.dto.UserRequest;
 import com.randy.banktut.entity.User;
 import com.randy.banktut.repository.UserRepository;
@@ -16,6 +17,10 @@ public class UserServiceImpl implements UserService{
 
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    EmailService emailService;
+
     @Override
     public BankResponse createAccount(UserRequest userRequest) {
 
@@ -46,6 +51,14 @@ public class UserServiceImpl implements UserService{
                 .build();
 
     User saveUser = userRepository.save(newUser);
+    //Send email alert
+    EmailDetails emailDetails = EmailDetails.builder()
+            .recipient(saveUser.getEmail())
+            .subject("ACCOUNT_CREATION")
+            .messageBody("Congratulations! Your Acount Has been Successfully Created. \nYour Account Details: \n" +
+                    "Account Name: " + saveUser.getFirstName() + " " + saveUser.getLastName() + " " + saveUser.getOtherName() + "\nAccount Number: " + saveUser.getAccountNumber())
+            .build();
+    emailService.sendEmailAlert(emailDetails);
     return BankResponse.builder()
             .responseCode(AccountUtils.ACCOUNT_CREATION_SUCCESS)
             .responseMessage(AccountUtils.ACCOUNT_CREATION_MESSAGE)

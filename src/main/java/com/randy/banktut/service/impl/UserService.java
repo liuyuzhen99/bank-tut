@@ -1,9 +1,11 @@
 package com.randy.banktut.service.impl;
 
-import com.randy.banktut.dto.AccountInfo;
-import com.randy.banktut.dto.BankResponse;
-import com.randy.banktut.dto.UserRequest;
+import com.randy.banktut.dto.*;
 
 public interface UserService {
     BankResponse createAccount(UserRequest userRequest);
+    BankResponse balanceEnquiry(EnquiryRequest request);
+    String nameEnquiry(EnquiryRequest request);
+    BankResponse creditAccount(CreditDebitRequest request);
+    BankResponse debitAccount(CreditDebitRequest request);
 }

@@ -4,7 +4,9 @@ import com.randy.banktut.dto.TransactionDto;
 import com.randy.banktut.entity.Transaction;
 import com.randy.banktut.repository.TransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+@Component
 public class TransactionImpl implements TransactionService{
 
     @Autowired

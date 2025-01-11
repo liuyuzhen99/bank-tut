@@ -154,6 +154,8 @@ public class UserServiceImpl implements UserService{
                     .build();
         }
 
+
+
         // check if the amount you intend to withdraw is not more than the current account balance
         User userToDebit = userRepository.findByAccountNumber(request.getAccountNumber());
         BigInteger availableBalance = userToDebit.getAccountBalance().toBigInteger();
@@ -167,6 +169,14 @@ public class UserServiceImpl implements UserService{
         } else {
             userToDebit.setAccountBalance(userToDebit.getAccountBalance().subtract(request.getAmount()));
             userRepository.save(userToDebit);
+
+            TransactionDto transactionDto = TransactionDto.builder()
+                    .accountNumber(userToDebit.getAccountNumber())
+                    .transactionType("DEBIT")
+                    .amount(request.getAmount())
+                    .build();
+
+            transactionService.saveTransaction(transactionDto);
             return BankResponse.builder()
                     .responseCode(AccountUtils.ACCOUNT_DEBITED_SUCCESS)
                     .responseMessage(AccountUtils.ACCOUNT_DEBITED_MESSAGE)
@@ -226,7 +236,15 @@ public class UserServiceImpl implements UserService{
                 .recipient(sourceAccountUser.getEmail())
                 .messageBody("The sum of " + request.getAmount() + " has been sent to you account from " +  sourceUsername + " Your current balance is " + sourceAccountUser.getAccountBalance())
                 .build();
-        emailService.sendEmailAlert(debitAlert);
+        emailService.sendEmailAlert(creditAlert);
+
+        TransactionDto transactionDto = TransactionDto.builder()
+                .accountNumber(destinationAccountUser.getAccountNumber())
+                .transactionType("TRANSFER")
+                .amount(request.getAmount())
+                .build();
+
+        transactionService.saveTransaction(transactionDto);
 
         return BankResponse.builder()
                 .responseCode(AccountUtils.TRANSFER_SUCCESSFUL_CODE)
